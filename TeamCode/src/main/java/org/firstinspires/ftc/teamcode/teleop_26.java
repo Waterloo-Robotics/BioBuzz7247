@@ -17,8 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative OpMode")
-@Disabled
+@TeleOp(name="teleop_26", group="Iterative OpMode")
 public class teleop_26 extends OpMode
 {
     // Declare OpMode members.
@@ -42,10 +41,10 @@ public class teleop_26 extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-       frontLeftDrive = hardwareMap.get(DcMotor.class, "front_Left_Drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRight_Drive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_Left_Drive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_Right_Drive");
+       frontLeftDrive = hardwareMap.get(DcMotor.class, "motorFL");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "motorFR");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "motorBL");
+        backRightDrive = hardwareMap.get(DcMotor.class, "motorBR");
 
         // IMU - FIELD CENTRIC STUFF!! //
         imu = hardwareMap.get(IMU.class, "imu");
@@ -100,17 +99,17 @@ public class teleop_26 extends OpMode
         double xPower = gamepad1.left_stick_x;
 
         // Field Centric stuff
-        double x_Mod = yPower*Math.sin(yaw)+xPower*Math.cos(yaw);
-        double y_Mod = xPower*Math.sin(yaw)-yPower*Math.cos(yaw);
+        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
+        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
 
         // Setup a variable for each drive wheel to save power level for telemetry
         //double leftPower;
         //double rightPower;
         // Send calculated power to wheels
-        backRightDrive.setPower(yPower - turnPower + xPower);
-        backLeftDrive.setPower(yPower + turnPower - xPower);
-        frontRightDrive.setPower(yPower - turnPower - xPower);
-        frontLeftDrive.setPower(yPower + turnPower + xPower);
+        backRightDrive.setPower(y_Mod - turnPower + x_Mod);
+        backLeftDrive.setPower(y_Mod + turnPower - x_Mod);
+        frontRightDrive.setPower(y_Mod - turnPower - x_Mod);
+        frontLeftDrive.setPower(y_Mod + turnPower + x_Mod);
 
         // call upon imu
         displayIMU();
@@ -139,7 +138,7 @@ public class teleop_26 extends OpMode
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
             // field centric
-            yaw = orientation.getYaw(AngleUnit.DEGREES);
+            yaw = orientation.getYaw(AngleUnit.RADIANS);
 
             // IMU Telemetry
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
