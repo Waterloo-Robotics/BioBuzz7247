@@ -22,29 +22,38 @@ public class teleop_26 extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor backLeftDrive = null;
-    private DcMotor backRightDrive = null;
-    private DcMotor frontRightDrive = null;
-    private DcMotor frontLeftDrive = null;
+    private DcMotor motorFL = null;
+    private DcMotor motorFR = null;
+    private DcMotor motorBL = null;
+    private DcMotor motorBR = null;
 
+    // Robot components
+    private DcMotor flywheel;
+    private DcMotor transferMotorOne;
+    private DcMotor intake;
+
+    boolean intakeOn = false;
+    boolean transferOn = false;
+    boolean flywheelOn = false;
+
+    // IMU Stuff
     IMU imu;
-
     private double yaw;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-       frontLeftDrive = hardwareMap.get(DcMotor.class, "motorFL");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "motorFR");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "motorBL");
-        backRightDrive = hardwareMap.get(DcMotor.class, "motorBR");
+        // Wheel Hardware Map
+        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
+        motorBL = hardwareMap.get(DcMotor.class, "motorFR");
+        motorFR = hardwareMap.get(DcMotor.class, "motorBL");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+
+        // Robot Components Hardware Map
+        flywheel = hardwareMap.get(DcMotor.class, "launcherMotor");
+
+        intake = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         // IMU - FIELD CENTRIC STUFF!! //
         imu = hardwareMap.get(IMU.class, "imu");
@@ -64,10 +73,10 @@ public class teleop_26 extends OpMode
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -105,14 +114,69 @@ public class teleop_26 extends OpMode
         // Setup a variable for each drive wheel to save power level for telemetry
         //double leftPower;
         //double rightPower;
+
         // Send calculated power to wheels
-        backRightDrive.setPower(y_Mod - turnPower + x_Mod);
-        backLeftDrive.setPower(y_Mod + turnPower - x_Mod);
-        frontRightDrive.setPower(y_Mod - turnPower - x_Mod);
-        frontLeftDrive.setPower(y_Mod + turnPower + x_Mod);
+        motorFR.setPower(y_Mod - turnPower - x_Mod);
+        motorBR.setPower(y_Mod - turnPower + x_Mod);
+        motorFL.setPower(y_Mod + turnPower + x_Mod);
+        motorBL.setPower(y_Mod + turnPower - x_Mod);
 
         // call upon imu
         displayIMU();
+
+        // call upon robot components
+        flywheel();
+        intake();
+        transfer();
+    }
+
+    public void flywheel()
+    {
+//        flywheelOn = gamepad1.right_bumper;
+
+        // Flywheel on
+        if(flywheelOn){
+            flywheel.setPower(1);
+        }
+        else{
+            flywheel.setPower(0);
+        }
+
+        // Intake activate
+        if (gamepad1.right_trigger > 0.5)
+        {
+            intakeOn = !intakeOn;
+        } else {
+            intakeOn = false;
+        }
+
+        // Transfer activate
+        if (gamepad1.left_trigger > 0.5)
+        {
+            transferOn = true;
+        } else {
+            intakeOn= false;
+        }
+
+    }
+
+    public void intake() //Intake Function
+    {
+//        intakeOn = gamepad1.left_bumper;
+        if(intakeOn){
+            intake.setPower(1);
+        }
+        else {
+            intake.setPower(0);
+        }
+    }
+    public void transfer()
+    {
+        if(transferOn) {
+            transferMotorOne.setPower(1);
+        } else {
+            transferMotorOne.setPower(0);
+        }
     }
 
 
@@ -122,11 +186,11 @@ public class teleop_26 extends OpMode
             //telemetry.addData("Hub orientation", "Logo=%s   USB=%s\n ", logoDirection, usbDirection);
 
             // Check to see if heading reset is requested
-            if (gamepad1.y) {
+            if (gamepad1.options) {
                 telemetry.addData("Yaw", "Resetting\n");
                 imu.resetYaw();
             } else {
-                telemetry.addData("Yaw", "Press Y (triangle) on Gamepad to reset\n");
+                telemetry.addData("Yaw", "Press options (menu) on Gamepad to reset\n");
             }
 
             // Show the elapsed game time and wheel power.
@@ -150,9 +214,7 @@ public class teleop_26 extends OpMode
             telemetry.update();
         }
     }
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
+
     @Override
     public void stop() {
     }
