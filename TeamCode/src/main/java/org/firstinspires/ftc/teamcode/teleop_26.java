@@ -2,18 +2,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 // IMU Imports
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
@@ -29,7 +26,7 @@ public class teleop_26 extends OpMode
 
     // Robot components
     private DcMotor flywheel;
-    private DcMotor transferMotorOne;
+    private DcMotor transfer;
     private DcMotor intake;
 
     boolean intakeOn = false;
@@ -51,8 +48,8 @@ public class teleop_26 extends OpMode
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
         // Robot Components Hardware Map
-        flywheel = hardwareMap.get(DcMotor.class, "launcherMotor");
-
+        flywheel = hardwareMap.get(DcMotor.class, "flywheelMotor");
+        transfer = hardwareMap.get(DcMotor.class, "transferMotor");
         intake = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         // IMU - FIELD CENTRIC STUFF!! //
@@ -128,6 +125,28 @@ public class teleop_26 extends OpMode
         flywheel();
         intake();
         transfer();
+
+        // Transfer activate
+        if (gamepad1.left_trigger > 0.5)
+        {
+            transferOn = true;
+        } else {
+            transferOn= false;
+        }
+
+        if (gamepad1.right_trigger > 0.5)
+        {
+            intakeOn = !intakeOn;
+        } else {
+            intakeOn = false;
+        }
+
+        if ((gamepad1.rightBumperWasPressed() && flywheelOn) == false) {
+            flywheelOn = true;
+        }
+        if (gamepad1.rightBumperWasPressed() && flywheelOn == true) {
+            flywheelOn = false;
+        }
     }
 
     public void flywheel()
@@ -143,21 +162,6 @@ public class teleop_26 extends OpMode
         }
 
         // Intake activate
-        if (gamepad1.right_trigger > 0.5)
-        {
-            intakeOn = !intakeOn;
-        } else {
-            intakeOn = false;
-        }
-
-        // Transfer activate
-        if (gamepad1.left_trigger > 0.5)
-        {
-            transferOn = true;
-        } else {
-            intakeOn= false;
-        }
-
     }
 
     public void intake() //Intake Function
@@ -173,9 +177,9 @@ public class teleop_26 extends OpMode
     public void transfer()
     {
         if(transferOn) {
-            transferMotorOne.setPower(1);
+            transfer.setPower(1);
         } else {
-            transferMotorOne.setPower(0);
+            transfer.setPower(0);
         }
     }
 
