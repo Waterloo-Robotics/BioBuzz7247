@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -75,6 +76,8 @@ public class teleop_26 extends OpMode
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
 
+        flywheel.setDirection(DcMotor.Direction.REVERSE);
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -141,11 +144,8 @@ public class teleop_26 extends OpMode
             intakeOn = false;
         }
 
-        if ((gamepad1.rightBumperWasPressed() && flywheelOn) == false) {
-            flywheelOn = true;
-        }
-        if (gamepad1.rightBumperWasPressed() && flywheelOn == true) {
-            flywheelOn = false;
+        if (gamepad1.rightBumperWasReleased()) {
+            flywheelOn = !flywheelOn;
         }
     }
 
@@ -155,7 +155,7 @@ public class teleop_26 extends OpMode
 
         // Flywheel on
         if(flywheelOn){
-            flywheel.setPower(1);
+            flywheel.setPower(0.5);
         }
         else{
             flywheel.setPower(0);
