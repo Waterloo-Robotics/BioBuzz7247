@@ -51,7 +51,7 @@ public class teleop_26 extends OpMode
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
         // Robot Components Hardware Map
-        flywheel = hardwareMap.get(DcMotor.class, "launcherMotor");
+        flywheel = hardwareMap.get(DcMotor.class, "flywheelMotor");
 
         intake = hardwareMap.get(DcMotor.class, "intakeMotor");
 
