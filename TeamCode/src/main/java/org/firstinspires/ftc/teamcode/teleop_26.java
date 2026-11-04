@@ -127,7 +127,7 @@ public class teleop_26 extends OpMode
         transfer();
 
         // Transfer activate
-        if (gamepad1.left_trigger > 0.5)
+        if (gamepad1.left_trigger > 0.5 || gamepad2.left_trigger > 0.5)
         {
             transferOn = true;
         } else {
@@ -141,10 +141,10 @@ public class teleop_26 extends OpMode
             intakeOn = false;
         }
 
-        if ((gamepad1.rightBumperWasPressed() && flywheelOn) == false) {
+        if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && flywheelOn == false) {
             flywheelOn = true;
         }
-        if (gamepad1.rightBumperWasPressed() && flywheelOn == true) {
+        if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && flywheelOn == true) {
             flywheelOn = false;
         }
     }
