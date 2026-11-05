@@ -25,13 +25,13 @@ public class teleop_26 extends OpMode
     private DcMotor motorBR = null;
 
     // Robot components
-    private DcMotor flywheel;
-    private DcMotor transfer;
-    private DcMotor intake;
+//    private DcMotor flywheel;
+//    private DcMotor transfer;
+//    private DcMotor intake;
 
-    boolean intakeOn = false;
-    boolean transferOn = false;
-    boolean flywheelOn = false;
+//    boolean intakeOn = false;
+//    boolean transferOn = false;
+//    boolean flywheelOn = false;
 
     // IMU Stuff
     IMU imu;
@@ -47,10 +47,10 @@ public class teleop_26 extends OpMode
         motorFR = hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
-        // Robot Components Hardware Map
-        flywheel = hardwareMap.get(DcMotor.class, "flywheelMotor");
-        transfer = hardwareMap.get(DcMotor.class, "transferMotor");
-        intake = hardwareMap.get(DcMotor.class, "intakeMotor");
+//        // Robot Components Hardware Map
+//        flywheel = hardwareMap.get(DcMotor.class, "flywheelMotor");
+//        transfer = hardwareMap.get(DcMotor.class, "transferMotor");
+//        intake = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         // IMU - FIELD CENTRIC STUFF!! //
         imu = hardwareMap.get(IMU.class, "imu");
@@ -104,9 +104,18 @@ public class teleop_26 extends OpMode
         double turnPower = gamepad1.right_stick_x;
         double xPower = gamepad1.left_stick_x;
 
-        // Field Centric stuff
-        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
-        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
+//         Field Centric stuff
+//        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
+//        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
+
+        double x_Mod = xPower * Math.cos(yaw) + yPower * Math.sin(yaw);
+        double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
+
+        telemetry.addData("x Input is: ", xPower);
+        telemetry.addData("y Input is: ", yPower);
+
+        telemetry.addData("x Mod is: ", x_Mod);
+        telemetry.addData("y Mod is: )", y_Mod);
 
         // Setup a variable for each drive wheel to save power level for telemetry
         //double leftPower;
@@ -121,66 +130,66 @@ public class teleop_26 extends OpMode
         // call upon imu
         displayIMU();
 
-        // call upon robot components
-        flywheel();
-        intake();
-        transfer();
-
-        // Transfer activate
-        if (gamepad1.left_trigger > 0.5 || gamepad2.left_trigger > 0.5)
-        {
-            transferOn = true;
-        } else {
-            transferOn= false;
-        }
-
-        if (gamepad1.right_trigger > 0.5)
-        {
-            intakeOn = !intakeOn;
-        } else {
-            intakeOn = false;
-        }
-
-        if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && flywheelOn == false) {
-            flywheelOn = true;
-        }
-        if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && flywheelOn == true) {
-            flywheelOn = false;
-        }
-    }
-
-    public void flywheel()
-    {
-//        flywheelOn = gamepad1.right_bumper;
-
-        // Flywheel on
-        if(flywheelOn){
-            flywheel.setPower(1);
-        }
-        else{
-            flywheel.setPower(0);
-        }
-
-        // Intake activate
-    }
-
-    public void intake() //Intake Function
-    {
-//        intakeOn = gamepad1.left_bumper;
-        if(intakeOn){
-            intake.setPower(1);
-        }
-        else {
-            intake.setPower(0);
-        }
-    }
-    public void transfer()
-    {
-        if(transferOn) {
-            transfer.setPower(1);
-        } else {
-            transfer.setPower(0);
-        }
+//        // call upon robot components
+//        flywheel();
+//        intake();
+//        transfer();
+//
+//        // Transfer activate
+//        if (gamepad1.left_trigger > 0.5 || gamepad2.left_trigger > 0.5)
+//        {
+//            transferOn = true;
+//        } else {
+//            transferOn= false;
+//        }
+//
+//        if (gamepad1.right_trigger > 0.5)
+//        {
+//            intakeOn = !intakeOn;
+//        } else {
+//            intakeOn = false;
+//        }
+//
+//        if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && flywheelOn == false) {
+//            flywheelOn = true;
+//        }
+//        if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && flywheelOn == true) {
+//            flywheelOn = false;
+//        }
+//    }
+//
+//    public void flywheel()
+//    {
+////        flywheelOn = gamepad1.right_bumper;
+//
+//        // Flywheel on
+//        if(flywheelOn){
+//            flywheel.setPower(1);
+//        }
+//        else{
+//            flywheel.setPower(0);
+//        }
+//
+//        // Intake activate
+//    }
+//
+//    public void intake() //Intake Function
+//    {
+////        intakeOn = gamepad1.left_bumper;
+//        if(intakeOn){
+//            intake.setPower(1);
+//        }
+//        else {
+//            intake.setPower(0);
+//        }
+//    }
+//    public void transfer()
+//    {
+//        if(transferOn) {
+//            transfer.setPower(1);
+//        } else {
+//            transfer.setPower(0);
+//        }
     }
 
 
@@ -206,7 +215,7 @@ public class teleop_26 extends OpMode
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
             // field centric
-            yaw = orientation.getYaw(AngleUnit.RADIANS);
+            yaw = -orientation.getYaw(AngleUnit.RADIANS);
 
             // IMU Telemetry
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
