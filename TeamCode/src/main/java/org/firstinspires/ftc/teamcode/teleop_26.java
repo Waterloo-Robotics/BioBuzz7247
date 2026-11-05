@@ -110,22 +110,22 @@ public class teleop_26 extends OpMode
         //double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
         //double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
 
-//        double x_Mod = xPower * Math.cos(yaw) + yPower * Math.sin(yaw);
-//        double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
+        double x_Mod = xPower * Math.cos(yaw) + yPower * Math.sin(yaw);
+        double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
 
         // Setup a variable for each drive wheel to save power level for telemetry
         //double leftPower;
         //double rightPower;
 
         // Send calculated power to wheels
-//        motorFR.setPower(y_Mod - turnPower - x_Mod);
-//        motorBR.setPower(y_Mod - turnPower + x_Mod);
-//        motorFL.setPower(y_Mod + turnPower + x_Mod);
-//        motorBL.setPower(y_Mod + turnPower - x_Mod);
-        motorFR.setPower(yPower - turnPower - xPower);
-        motorBR.setPower(yPower - turnPower + xPower);
-        motorFL.setPower(yPower + turnPower + xPower);
-        motorBL.setPower(yPower + turnPower - xPower);
+        motorFR.setPower(y_Mod - turnPower - x_Mod);
+        motorBR.setPower(y_Mod - turnPower + x_Mod);
+        motorFL.setPower(y_Mod + turnPower + x_Mod);
+        motorBL.setPower(y_Mod + turnPower - x_Mod);
+//        motorFR.setPower(yPower - turnPower - xPower);
+//        motorBR.setPower(yPower - turnPower + xPower);
+//        motorFL.setPower(yPower + turnPower + xPower);
+//        motorBL.setPower(yPower + turnPower - xPower);
 
         // call upon imu
         displayIMU();
@@ -136,21 +136,21 @@ public class teleop_26 extends OpMode
         transfer();
 
         // Transfer activate
-        if (gamepad1.left_trigger > 0.5)
+        if (gamepad1.left_trigger > 0.5 || gamepad2.left_trigger > 0.5)
         {
             transferOn = true;
         } else {
             transferOn= false;
         }
 
-        if (gamepad1.right_trigger > 0.5)
+        if (gamepad1.right_trigger > 0.5 || gamepad2.left_trigger > 0.5)
         {
             intakeOn = !intakeOn;
         } else {
             intakeOn = false;
         }
 
-        if (gamepad1.rightBumperWasReleased()) {
+        if (gamepad1.rightBumperWasReleased() || gamepad2.rightBumperWasReleased()) {
             flywheelOn = !flywheelOn;
         }
     }
@@ -212,7 +212,7 @@ public class teleop_26 extends OpMode
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
             // field centric
-            yaw = orientation.getYaw(AngleUnit.RADIANS);
+            yaw = -orientation.getYaw(AngleUnit.RADIANS);
 
             // IMU Telemetry
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
