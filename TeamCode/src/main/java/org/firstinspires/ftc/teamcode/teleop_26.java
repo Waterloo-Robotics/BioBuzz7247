@@ -5,7 +5,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -108,18 +107,25 @@ public class teleop_26 extends OpMode
         double xPower = gamepad1.left_stick_x;
 
         // Field Centric stuff
-        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
-        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
+        //double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
+        //double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
+
+//        double x_Mod = xPower * Math.cos(yaw) + yPower * Math.sin(yaw);
+//        double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
 
         // Setup a variable for each drive wheel to save power level for telemetry
         //double leftPower;
         //double rightPower;
 
         // Send calculated power to wheels
-        motorFR.setPower(y_Mod - turnPower - x_Mod);
-        motorBR.setPower(y_Mod - turnPower + x_Mod);
-        motorFL.setPower(y_Mod + turnPower + x_Mod);
-        motorBL.setPower(y_Mod + turnPower - x_Mod);
+//        motorFR.setPower(y_Mod - turnPower - x_Mod);
+//        motorBR.setPower(y_Mod - turnPower + x_Mod);
+//        motorFL.setPower(y_Mod + turnPower + x_Mod);
+//        motorBL.setPower(y_Mod + turnPower - x_Mod);
+        motorFR.setPower(yPower - turnPower - xPower);
+        motorBR.setPower(yPower - turnPower + xPower);
+        motorFL.setPower(yPower + turnPower + xPower);
+        motorBL.setPower(yPower + turnPower - xPower);
 
         // call upon imu
         displayIMU();
@@ -155,7 +161,7 @@ public class teleop_26 extends OpMode
 
         // Flywheel on
         if(flywheelOn){
-            flywheel.setPower(0.5);
+            flywheel.setPower(0.70);
         }
         else{
             flywheel.setPower(0);
@@ -217,10 +223,6 @@ public class teleop_26 extends OpMode
             telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             telemetry.update();
         }
-    }
-
-    @Override
-    public void stop() {
     }
 
 }
