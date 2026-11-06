@@ -56,8 +56,8 @@ public class Auto_2026_2027 extends OpMode {
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
 
         // NOTE: If the logo of control hub that says "Control Hub" is facing right ex: robot is facing forward and its on its right side. . then tell the firectiong its facing right.
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         // Defining stuff frfr.. I think? - Brayyten
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -158,8 +158,10 @@ public class Auto_2026_2027 extends OpMode {
         double robotPinpointYError = robotYDestination - robotYPosition;
 
         // Field Centric stuff
-        double x_Mod = robotPinpointYError * Math.cos(yaw) + robotPinpointXError * Math.sin(yaw);
-        double y_Mod = robotPinpointXError * Math.cos(yaw) - robotPinpointYError * Math.sin(yaw);
+        double x_Mod = -(robotPinpointYError * Math.cos(yaw) + robotPinpointYError * Math.sin(yaw));
+        double y_Mod = -robotPinpointXError * Math.sin(yaw) + robotPinpointYError * Math.cos(yaw);
+//        double x_Mod = robotPinpointYError * Math.cos(yaw) + robotPinpointXError * Math.sin(yaw);
+//        double y_Mod = robotPinpointXError * Math.cos(yaw) - robotPinpointYError * Math.sin(yaw);
 
         frontRightDrive.setPower(y_Mod);
         backRightDrive.setPower(y_Mod);
