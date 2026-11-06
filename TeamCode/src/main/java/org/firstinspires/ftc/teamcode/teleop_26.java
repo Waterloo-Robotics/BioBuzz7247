@@ -43,8 +43,8 @@ public class teleop_26 extends OpMode
 
         // Wheel Hardware Map
         motorFL = hardwareMap.get(DcMotor.class, "motorFL");
-        motorBL = hardwareMap.get(DcMotor.class, "motorFR");
-        motorFR = hardwareMap.get(DcMotor.class, "motorBL");
+        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
         // Robot Components Hardware Map
