@@ -42,9 +42,9 @@ public class teleop_26 extends OpMode
         telemetry.addData("Status", "Initialized");
 
         // Wheel Hardware Map
-        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        motorBR = hardwareMap.get(DcMotor.class, "motorBL");
+        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
         // Robot Components Hardware Map
@@ -110,7 +110,7 @@ public class teleop_26 extends OpMode
         //double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
         //double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
 
-        double x_Mod = xPower * Math.cos(yaw) + yPower * Math.sin(yaw);
+        double x_Mod = -(xPower * Math.cos(yaw) + yPower * Math.sin(yaw));
         double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
 
         // Setup a variable for each drive wheel to save power level for telemetry
@@ -120,8 +120,8 @@ public class teleop_26 extends OpMode
         // Send calculated power to wheels
         motorFR.setPower(y_Mod - turnPower - x_Mod);
         motorBR.setPower(y_Mod - turnPower + x_Mod);
-        motorFL.setPower(y_Mod + turnPower + x_Mod);
-        motorBL.setPower(y_Mod + turnPower - x_Mod);
+        motorFL.setPower(y_Mod + turnPower - x_Mod);
+        motorBL.setPower(y_Mod + turnPower + x_Mod);
 //        motorFR.setPower(yPower - turnPower - xPower);
 //        motorBR.setPower(yPower - turnPower + xPower);
 //        motorFL.setPower(yPower + turnPower + xPower);
