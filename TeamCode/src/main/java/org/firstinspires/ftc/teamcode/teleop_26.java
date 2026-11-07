@@ -32,6 +32,7 @@ public class teleop_26 extends OpMode
     boolean intakeOn = false;
     boolean transferOn = false;
     boolean flywheelOn = false;
+    private double flywheelPower;
 
     // IMU Stuff
     IMU imu;
@@ -39,6 +40,7 @@ public class teleop_26 extends OpMode
 
     @Override
     public void init() {
+        flywheelPower = 0.55;
         telemetry.addData("Status", "Initialized");
 
         // Wheel Hardware Map
@@ -153,6 +155,13 @@ public class teleop_26 extends OpMode
         if (gamepad1.rightBumperWasReleased() || gamepad2.rightBumperWasReleased()) {
             flywheelOn = !flywheelOn;
         }
+
+        if (gamepad1.dpadDownWasPressed()) {
+            flywheelPower = .60;
+        }
+        if (gamepad1.dpadUpWasPressed()) {
+            flywheelPower = 0.55;
+        }
     }
 
     public void flywheel()
@@ -161,7 +170,7 @@ public class teleop_26 extends OpMode
 
         // Flywheel on
         if(flywheelOn){
-            flywheel.setPower(0.70);
+            flywheel.setPower(flywheelPower);
         }
         else{
             flywheel.setPower(0);
