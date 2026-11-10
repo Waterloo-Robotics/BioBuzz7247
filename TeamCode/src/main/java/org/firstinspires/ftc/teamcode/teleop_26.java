@@ -40,7 +40,7 @@ public class teleop_26 extends OpMode
 
     @Override
     public void init() {
-        flywheelPower = 0.55;
+        flywheelPower = 0.53;
         telemetry.addData("Status", "Initialized");
 
         // Wheel Hardware Map

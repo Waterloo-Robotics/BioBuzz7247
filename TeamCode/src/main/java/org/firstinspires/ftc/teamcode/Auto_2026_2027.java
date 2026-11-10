@@ -147,7 +147,8 @@ public class Auto_2026_2027 extends OpMode {
         pinpoint.update();
 
         double robotXDestination = 1;
-        double robotYDestination = 1;
+        double robotYDestination = 10;
+
 
         Pose2D pose2D = pinpoint.getPosition();
         double robotXPosition = pose2D.getX(DistanceUnit.INCH);
@@ -163,6 +164,10 @@ public class Auto_2026_2027 extends OpMode {
 //        double x_Mod = robotPinpointYError * Math.cos(yaw) + robotPinpointXError * Math.sin(yaw);
 //        double y_Mod = robotPinpointXError * Math.cos(yaw) - robotPinpointYError * Math.sin(yaw);
 
+//        if (robotPinpointXError > 0.5 && robotPinpointYError > 0.5);
+//        {
+//            stop();
+//        }
         frontRightDrive.setPower(y_Mod);
         backRightDrive.setPower(y_Mod);
         frontLeftDrive.setPower(x_Mod);
