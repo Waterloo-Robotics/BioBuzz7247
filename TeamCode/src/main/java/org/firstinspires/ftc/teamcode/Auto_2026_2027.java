@@ -45,6 +45,7 @@ public class Auto_2026_2027 extends OpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "motorFR");
         backLeftDrive = hardwareMap.get(DcMotor.class, "motorBL");
         backRightDrive = hardwareMap.get(DcMotor.class, "motorBR");
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         // IMU - FIELD CENTRIC STUFF!! //
         imu = hardwareMap.get(IMU.class, "imu");
@@ -56,11 +57,11 @@ public class Auto_2026_2027 extends OpMode {
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
 
         // NOTE: If the logo of control hub that says "Control Hub" is facing right ex: robot is facing forward and its on its right side. . then tell the firectiong its facing right.
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+//        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+//        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         // Defining stuff frfr.. I think? - Brayyten
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+//        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -73,7 +74,7 @@ public class Auto_2026_2027 extends OpMode {
 
         // Initializing the IMU's orientation..
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
+//        imu.initialize(new IMU.Parameters(orientationOnRobot));
     }
 
     @Override
