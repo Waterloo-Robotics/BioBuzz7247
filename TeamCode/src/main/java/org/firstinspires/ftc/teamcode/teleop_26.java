@@ -242,6 +242,19 @@ public class teleop_26 extends OpMode
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         pinpoint.resetPosAndIMU();
+
+//         Retrieve Rotational Angles and Velocities for IMU
+            YawPitchRollAngles orientation = pinpoint.getRobotYawPitchRollAngles();
+            AngularVelocity angularVelocity = pinpoint.getRobotAngularVelocity(AngleUnit.DEGREES);
+
+            // field centric
+            yaw = -orientation.getYaw(AngleUnit.RADIANS);
+
+            // IMU Telemetry
+            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+            telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+            telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+            telemetry.update();
     }
 
 
