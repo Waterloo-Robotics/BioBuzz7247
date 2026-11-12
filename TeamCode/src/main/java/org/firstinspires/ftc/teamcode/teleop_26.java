@@ -2,18 +2,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 // IMU Imports
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
@@ -29,12 +26,13 @@ public class teleop_26 extends OpMode
 
     // Robot components
     private DcMotor flywheel;
-    private DcMotor transferMotorOne;
+    private DcMotor transfer;
     private DcMotor intake;
 
     boolean intakeOn = false;
     boolean transferOn = false;
     boolean flywheelOn = false;
+    private double flywheelPower;
 
     // IMU Stuff
     IMU imu;
@@ -42,17 +40,18 @@ public class teleop_26 extends OpMode
 
     @Override
     public void init() {
+        flywheelPower = 0.53;
         telemetry.addData("Status", "Initialized");
 
         // Wheel Hardware Map
+        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorFL = hardwareMap.get(DcMotor.class, "motorFL");
-        motorBL = hardwareMap.get(DcMotor.class, "motorFR");
-        motorFR = hardwareMap.get(DcMotor.class, "motorBL");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
         // Robot Components Hardware Map
         flywheel = hardwareMap.get(DcMotor.class, "flywheelMotor");
-
+        transfer = hardwareMap.get(DcMotor.class, "transferMotor");
         intake = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         // IMU - FIELD CENTRIC STUFF!! //
@@ -78,6 +77,8 @@ public class teleop_26 extends OpMode
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
 
+        flywheel.setDirection(DcMotor.Direction.REVERSE);
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -89,7 +90,7 @@ public class teleop_26 extends OpMode
 
     }
 
-     // * Code to run ONCE when the driver hits START
+    // * Code to run ONCE when the driver hits START
     @Override
     public void start() {
         runtime.reset();
@@ -108,8 +109,11 @@ public class teleop_26 extends OpMode
         double xPower = gamepad1.left_stick_x;
 
         // Field Centric stuff
-        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
-        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
+        //double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
+        //double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
+
+        double x_Mod = -(xPower * Math.cos(yaw) + yPower * Math.sin(yaw));
+        double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
 
         // Setup a variable for each drive wheel to save power level for telemetry
         //double leftPower;
@@ -118,8 +122,12 @@ public class teleop_26 extends OpMode
         // Send calculated power to wheels
         motorFR.setPower(y_Mod - turnPower - x_Mod);
         motorBR.setPower(y_Mod - turnPower + x_Mod);
-        motorFL.setPower(y_Mod + turnPower + x_Mod);
-        motorBL.setPower(y_Mod + turnPower - x_Mod);
+        motorFL.setPower(y_Mod + turnPower - x_Mod);
+        motorBL.setPower(y_Mod + turnPower + x_Mod);
+//        motorFR.setPower(yPower - turnPower - xPower);
+//        motorBR.setPower(yPower - turnPower + xPower);
+//        motorFL.setPower(yPower + turnPower + xPower);
+//        motorBL.setPower(yPower + turnPower - xPower);
 
         // call upon imu
         displayIMU();
@@ -128,6 +136,32 @@ public class teleop_26 extends OpMode
         flywheel();
         intake();
         transfer();
+
+        // Transfer activate
+        if (gamepad1.left_trigger > 0.5 || gamepad2.left_trigger > 0.5)
+        {
+            transferOn = true;
+        } else {
+            transferOn= false;
+        }
+
+        if (gamepad1.right_trigger > 0.5 || gamepad2.left_trigger > 0.5)
+        {
+            intakeOn = !intakeOn;
+        } else {
+            intakeOn = false;
+        }
+
+        if (gamepad1.rightBumperWasReleased() || gamepad2.rightBumperWasReleased()) {
+            flywheelOn = !flywheelOn;
+        }
+
+        if (gamepad1.dpadDownWasPressed()) {
+            flywheelPower = .60;
+        }
+        if (gamepad1.dpadUpWasPressed()) {
+            flywheelPower = 0.55;
+        }
     }
 
     public void flywheel()
@@ -136,28 +170,13 @@ public class teleop_26 extends OpMode
 
         // Flywheel on
         if(flywheelOn){
-            flywheel.setPower(1);
+            flywheel.setPower(flywheelPower);
         }
         else{
             flywheel.setPower(0);
         }
 
         // Intake activate
-        if (gamepad1.right_trigger > 0.5)
-        {
-            intakeOn = !intakeOn;
-        } else {
-            intakeOn = false;
-        }
-
-        // Transfer activate
-        if (gamepad1.left_trigger > 0.5)
-        {
-            transferOn = true;
-        } else {
-            intakeOn= false;
-        }
-
     }
 
     public void intake() //Intake Function
@@ -173,9 +192,9 @@ public class teleop_26 extends OpMode
     public void transfer()
     {
         if(transferOn) {
-            transferMotorOne.setPower(1);
+            transfer.setPower(1);
         } else {
-            transferMotorOne.setPower(0);
+            transfer.setPower(0);
         }
     }
 
@@ -202,7 +221,7 @@ public class teleop_26 extends OpMode
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
             // field centric
-            yaw = orientation.getYaw(AngleUnit.RADIANS);
+            yaw = -orientation.getYaw(AngleUnit.RADIANS);
 
             // IMU Telemetry
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
@@ -213,10 +232,6 @@ public class teleop_26 extends OpMode
             telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             telemetry.update();
         }
-    }
-
-    @Override
-    public void stop() {
     }
 
 }
