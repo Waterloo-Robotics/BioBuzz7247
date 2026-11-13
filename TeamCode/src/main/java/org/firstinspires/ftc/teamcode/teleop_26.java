@@ -102,25 +102,21 @@ public class teleop_26 extends OpMode
         telemetry.addData("Status", "Initialized");
     }
 
-
-    // Code to run REPEATEDLY after the driver hits INIT, but before they hit START
-    @Override
-    public void init_loop() {
-
-    }
-
-    // * Code to run ONCE when the driver hits START
     @Override
     public void start() {
         runtime.reset();
     }
 
-
-    // * Code to run REPEATEDLY after the driver hits START but before they hit STOP
-    // Stuff below is how you call on stuff!!
     @Override
     public void loop() {
-        yaw = pinpoint.getYawScalar();
+        pinpoint.update();
+        Pose2D pose2D = pinpoint.getPosition();
+
+        telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
+        telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
+        telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
+
+        yaw = pose2D.getHeading(AngleUnit.DEGREES);
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
@@ -129,34 +125,22 @@ public class teleop_26 extends OpMode
         double xPower = gamepad1.left_stick_x;
 
         // Field Centric stuff
-        //double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
-        //double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
-
         double x_Mod = -(xPower * Math.cos(yaw) + yPower * Math.sin(yaw));
         double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
-
-        // Setup a variable for each drive wheel to save power level for telemetry
-        //double leftPower;
-        //double rightPower;
 
         // Send calculated power to wheels
         motorFR.setPower(y_Mod - turnPower - x_Mod);
         motorBR.setPower(y_Mod - turnPower + x_Mod);
         motorFL.setPower(y_Mod + turnPower - x_Mod);
         motorBL.setPower(y_Mod + turnPower + x_Mod);
-//        motorFR.setPower(yPower - turnPower - xPower);
-//        motorBR.setPower(yPower - turnPower + xPower);
-//        motorFL.setPower(yPower + turnPower + xPower);
-//        motorBL.setPower(yPower + turnPower - xPower);
-
-        // call upon imu
-//        displayIMU();
 
         // call upon robot components
         flywheel();
         intake();
         transfer();
 
+
+        // Begin Controls
         // Transfer activate
         if (gamepad1.left_trigger > 0.5 || gamepad2.left_trigger > 0.5)
         {
@@ -186,16 +170,13 @@ public class teleop_26 extends OpMode
             // You could use readings from April Tags here to give a new known position to the pinpoint
             pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
         }
+        // End Controls
 
-            pinpoint.update();
-            Pose2D pose2D = pinpoint.getPosition();
 
-            telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
-            telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
-            telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
 
     }
 
+    // Begin Controls
     public void flywheel()
     {
 //        flywheelOn = gamepad1.right_bumper;
@@ -229,7 +210,8 @@ public class teleop_26 extends OpMode
             transfer.setPower(0);
         }
     }
-
+// End controls
+//NRuke
     public void configurePinpoint(){
 
         pinpoint.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
@@ -237,47 +219,9 @@ public class teleop_26 extends OpMode
 
         // X and Y positions
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                //X Top, Y Bottom
+                GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         pinpoint.resetPosAndIMU();
     }
-
-
-
-    // This code uses IMU from the Control Hub
-//    public void displayIMU()
-//    {
-//        {
-//            //telemetry.addData("Hub orientation", "Logo=%s   USB=%s\n ", logoDirection, usbDirection);
-//
-//            // Check to see if heading reset is requested
-//            if (gamepad1.options) {
-//                telemetry.addData("Yaw", "Resetting\n");
-//                imu.resetYaw();
-//            } else {
-//                telemetry.addData("Yaw", "Press options (menu) on Gamepad to reset\n");
-//            }
-//
-//            // Show the elapsed game time and wheel power.
-//            telemetry.addData("Status", "Run Time: " + runtime.toString());
-//            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-//
-//            // Retrieve Rotational Angles and Velocities for IMU
-//            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-//            AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
-//
-//            // field centric
-//            yaw = -orientation.getYaw(AngleUnit.RADIANS);
-//
-//            // IMU Telemetry
-//            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-//            telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-//            telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-//            telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
-//            telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
-//            telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
-//            telemetry.update();
-//        }
-//    }
-
 }
