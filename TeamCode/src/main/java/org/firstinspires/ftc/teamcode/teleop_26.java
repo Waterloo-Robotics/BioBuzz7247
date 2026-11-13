@@ -73,15 +73,6 @@ public class teleop_26 extends OpMode
         // Configure the PP
         configurePinpoint();
 
-
-        if(gamepad1.options){
-            // You could use readings from April Tags here to give a new known position to the pinpoint
-            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
-        }
-        pinpoint.update();
-        Pose2D pose2D = pinpoint.getPosition();
-
-
 //        // NOTE: If the logo of control hub that says "Control Hub" is facing right ex: robot is facing forward and its on its right side. . then tell the firectiong its facing right.
 //        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
 //        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
@@ -109,12 +100,6 @@ public class teleop_26 extends OpMode
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
-
-        // PP Telemetry
-        telemetry.addLine("Press option (Menu) button to reset the position");
-        telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
-        telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
-        telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
     }
 
 
@@ -135,6 +120,7 @@ public class teleop_26 extends OpMode
     // Stuff below is how you call on stuff!!
     @Override
     public void loop() {
+        yaw = pinpoint.getYawScalar();
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
@@ -196,6 +182,18 @@ public class teleop_26 extends OpMode
         if (gamepad1.dpadUpWasPressed()) {
             flywheelPower = 0.55;
         }
+        if(gamepad1.options) {
+            // You could use readings from April Tags here to give a new known position to the pinpoint
+            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
+        }
+
+            pinpoint.update();
+            Pose2D pose2D = pinpoint.getPosition();
+
+            telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
+            telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
+            telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
+
     }
 
     public void flywheel()
@@ -242,19 +240,6 @@ public class teleop_26 extends OpMode
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         pinpoint.resetPosAndIMU();
-
-//         Retrieve Rotational Angles and Velocities for IMU
-            YawPitchRollAngles orientation = pinpoint.getRobotYawPitchRollAngles();
-            AngularVelocity angularVelocity = pinpoint.getRobotAngularVelocity(AngleUnit.DEGREES);
-
-            // field centric
-            yaw = -orientation.getYaw(AngleUnit.RADIANS);
-
-            // IMU Telemetry
-            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-            telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-            telemetry.update();
     }
 
 
