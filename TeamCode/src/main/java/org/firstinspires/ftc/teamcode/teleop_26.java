@@ -1,5 +1,11 @@
 
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.Table2D;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -34,12 +40,14 @@ public class teleop_26 extends OpMode
     boolean flywheelOn = false;
     private double flywheelPower;
 
+
     // IMU Stuff
     IMU imu;
     private double yaw;
 
     @Override
     public void init() {
+
         flywheelPower = 0.53;
         telemetry.addData("Status", "Initialized");
 
