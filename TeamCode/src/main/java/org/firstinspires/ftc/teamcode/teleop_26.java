@@ -1,10 +1,10 @@
-
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.LimelightProcessingModule;
 import org.firstinspires.ftc.teamcode.Table2D;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 // IMU Imports
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
@@ -34,13 +36,17 @@ public class teleop_26 extends OpMode
     private DcMotor flywheel;
     private DcMotor transfer;
     private DcMotor intake;
+    private Limelight3A limelight;
+    private LimelightProcessingModule llModule;
 
     boolean intakeOn = false;
     boolean transferOn = false;
     boolean flywheelOn = false;
+    boolean autoTargeting = true;
     private double flywheelPresetPower;
-    private float[] distance = {22, 30, 35, 40,44,52,56,69,81,125,126};
-    private float[] flywheelPower = {2700, 3000, 3000, 3000, 3300, 3200, 3300, 3500, 3350, 4000,4000};
+    private double currentFlywheelPower;
+    private float[] distance = {22, 30, 35, 40, 44, 52, 56, 69, 81, 125, 126};
+    private float[] flywheelPower = {0.45f, 0.48f, 0.50f, 0.52f, 0.54f, 0.57f, 0.60f, 0.65f, 0.70f, 0.85f, 0.85f};
     private Table2D flywheel_speed_table = new Table2D(distance, flywheelPower);
 
 
@@ -52,6 +58,7 @@ public class teleop_26 extends OpMode
     public void init() {
 
         flywheelPresetPower = 0.53;
+        currentFlywheelPower = flywheelPresetPower;
         telemetry.addData("Status", "Initialized");
 
         // Wheel Hardware Map
@@ -64,6 +71,10 @@ public class teleop_26 extends OpMode
         flywheel = hardwareMap.get(DcMotor.class, "flywheelMotor");
         transfer = hardwareMap.get(DcMotor.class, "transferMotor");
         intake = hardwareMap.get(DcMotor.class, "intakeMotor");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+        llModule = new LimelightProcessingModule(limelight, telemetry);
+        limelight.start();
 
         // IMU - FIELD CENTRIC STUFF!! //
         imu = hardwareMap.get(IMU.class, "imu");
@@ -101,7 +112,7 @@ public class teleop_26 extends OpMode
 
     }
 
-     // * Code to run ONCE when the driver hits START
+    // * Code to run ONCE when the driver hits START
     @Override
     public void start() {
         runtime.reset();
@@ -140,6 +151,24 @@ public class teleop_26 extends OpMode
 //        motorFL.setPower(yPower + turnPower + xPower);
 //        motorBL.setPower(yPower + turnPower - xPower);
 
+        if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
+            autoTargeting = !autoTargeting;
+        }
+
+        Pose2D pose = llModule.limelightResult();
+        float limelight_distance = 0;
+
+        if (autoTargeting && pose != null) {
+            limelight_distance = (float) -pose.getX(DistanceUnit.INCH);
+            currentFlywheelPower = Range.clip(flywheel_speed_table.Lookup(limelight_distance), 0.0, 1.0);
+        } else if (!autoTargeting) {
+            currentFlywheelPower = flywheelPresetPower;
+        }
+
+        telemetry.addData("Auto Targeting", autoTargeting);
+        telemetry.addData("Limelight Distance", limelight_distance);
+        telemetry.addData("Flywheel Power", currentFlywheelPower);
+
         // call upon imu
         displayIMU();
 
@@ -176,7 +205,7 @@ public class teleop_26 extends OpMode
 
         // Flywheel on
         if(flywheelOn){
-            flywheel.setPower(flywheelPresetPower);
+            flywheel.setPower(currentFlywheelPower);
         }
         else{
             flywheel.setPower(0);
