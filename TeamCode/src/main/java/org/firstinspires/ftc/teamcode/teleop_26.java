@@ -96,7 +96,7 @@ public class teleop_26 extends OpMode
 
 
         // Set the location of the robot - this should be the place you are starting the robot from
-        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
+        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0));
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -114,9 +114,9 @@ public class teleop_26 extends OpMode
 
         telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
         telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
-        telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.DEGREES));
+        telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.RADIANS));
 
-        yaw = pose2D.getHeading(AngleUnit.DEGREES);
+        yaw = pose2D.getHeading(AngleUnit.RADIANS);
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
@@ -168,7 +168,7 @@ public class teleop_26 extends OpMode
         }
         if(gamepad1.options) {
             // You could use readings from April Tags here to give a new known position to the pinpoint
-            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
+            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0));
         }
         // End Controls
 
