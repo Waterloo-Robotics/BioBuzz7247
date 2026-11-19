@@ -94,28 +94,12 @@ public class teleop_26 extends OpMode
         telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.RADIANS));
 
         yaw = pose2D.getHeading(AngleUnit.RADIANS);
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double yPower = gamepad1.left_stick_y;
-        double turnPower = gamepad1.right_stick_x;
-        double xPower = gamepad1.left_stick_x;
-
-        // Field Centric stuff
-        double x_Mod = -(xPower * Math.cos(yaw) + yPower * Math.sin(yaw));
-        double y_Mod = -xPower * Math.sin(yaw) + yPower * Math.cos(yaw);
-
-        // Send calculated power to wheels
-        motorFR.setPower(y_Mod - turnPower - x_Mod);
-        motorBR.setPower(y_Mod - turnPower + x_Mod);
-        motorFL.setPower(y_Mod + turnPower - x_Mod);
-        motorBL.setPower(y_Mod + turnPower + x_Mod);
-
+        
         // call upon robot components
         flywheel();
         intake();
         transfer();
-
+        driveBase();
 
         // Begin Controls
         // Transfer activate
@@ -148,8 +132,28 @@ public class teleop_26 extends OpMode
             pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0));
         }
         // End Controls
+    }
 
+    public void driveBase()
+    {
+        //Get variables from the gamepad
+        double drive_Input = gamepad1.left_stick_y;
+        double strafe_Input = -gamepad1.left_stick_x;
+        double driveTurn = gamepad1.right_stick_x;
 
+        double theta = Math.atan2(drive_Input, strafe_Input);
+        double r = Math.hypot(strafe_Input, drive_Input);
+
+        theta = AngleUnit.normalizeRadians(theta - yaw);
+
+        double drive_Mod = r * Math.sin(theta);
+        double strafe_Mod = r * Math.cos(theta);
+
+        //Translate inputs to outputs for motors
+        motorBL.setPower (drive_Mod + driveTurn - strafe_Mod);
+        motorBR.setPower (drive_Mod - driveTurn + strafe_Mod);
+        motorFL.setPower (drive_Mod + driveTurn + strafe_Mod);
+        motorFR.setPower (drive_Mod - driveTurn - strafe_Mod);
 
     }
 
