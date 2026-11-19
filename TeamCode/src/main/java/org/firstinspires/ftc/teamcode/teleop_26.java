@@ -37,10 +37,6 @@ public class teleop_26 extends OpMode
     boolean flywheelOn = false;
     private double flywheelPower;
 
-    // IMU Stuff
-//    IMU imu;
-
-
     // PP stuff
     GoBildaPinpointDriver pinpoint;
 
@@ -65,28 +61,9 @@ public class teleop_26 extends OpMode
         // Pinpoint IMU!
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        // IMU - FIELD CENTRIC STUFF!! //
-//        imu = hardwareMap.get(IMU.class, "imu");
-
-
-
         // Configure the PP
         configurePinpoint();
 
-//        // NOTE: If the logo of control hub that says "Control Hub" is facing right ex: robot is facing forward and its on its right side. . then tell the firectiong its facing right.
-//        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-//        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-//
-//        // Defining stuff frfr.. I think? - Brayyten
-//        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-        // Initializing the IMU's orientation..
-        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
-//        imu.initialize(new IMU.Parameters(orientationOnRobot));
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         motorFL.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.FORWARD);
@@ -210,8 +187,8 @@ public class teleop_26 extends OpMode
             transfer.setPower(0);
         }
     }
+
 // End controls
-//NRuke
     public void configurePinpoint(){
 
         pinpoint.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
@@ -224,4 +201,5 @@ public class teleop_26 extends OpMode
 
         pinpoint.resetPosAndIMU();
     }
+
 }
