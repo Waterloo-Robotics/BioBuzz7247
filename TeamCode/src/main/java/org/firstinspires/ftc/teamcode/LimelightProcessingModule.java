@@ -15,32 +15,31 @@ import java.util.List;
 public class LimelightProcessingModule {
 
     Telemetry telemetry;
-
     public Limelight3A limelight;
+
     public LimelightProcessingModule(Limelight3A limelight, Telemetry telemetry)
     {
         this.telemetry = telemetry;
         this.limelight = limelight;
-//        this.limelight.pipelineSwitch(0);
-//        this.limelight.start();
+        this.limelight.pipelineSwitch(0);
     }
-    /* ------ */
-    /* limelightResult
-     *  The goal of this function is to return the robot position
-     *  relative to the april tag.
-     * */
+
     public Pose2D limelightResult() {
         LLResult llResult = this.limelight.getLatestResult();
 
         if (llResult != null && llResult.isValid())
         {
             List<LLResultTypes.FiducialResult> results = llResult.getFiducialResults();
-            Pose3D robot_pose = results.get(0).getRobotPoseTargetSpace();
+            if (results != null && !results.isEmpty()) {
+                Pose3D robot_pose = results.get(0).getRobotPoseTargetSpace();
 
-            double x = robot_pose.getPosition().toUnit(DistanceUnit.INCH).z;
-            double y = robot_pose.getPosition().toUnit(DistanceUnit.INCH).y;
-            double rot = robot_pose.getOrientation().getYaw(AngleUnit.DEGREES);
-            return new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.DEGREES, rot);
+                double tx = robot_pose.getPosition().toUnit(DistanceUnit.INCH).x;
+                double ty = robot_pose.getPosition().toUnit(DistanceUnit.INCH).y;
+                double horizontalDist = Math.hypot(tx, ty);
+                double rot = robot_pose.getOrientation().getYaw(AngleUnit.DEGREES);
+
+                return new Pose2D(DistanceUnit.INCH, horizontalDist, ty, AngleUnit.DEGREES, rot);
+            }
         }
         return null;
     }

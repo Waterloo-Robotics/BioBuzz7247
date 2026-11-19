@@ -45,8 +45,8 @@ public class teleop_26 extends OpMode
     boolean autoTargeting = true;
     private double flywheelPresetPower;
     private double currentFlywheelPower;
-    private float[] distance = {22, 30, 35, 40, 44, 52, 56, 69, 81, 125, 126};
-    private float[] flywheelPower = {0.45f, 0.48f, 0.50f, 0.52f, 0.54f, 0.57f, 0.60f, 0.65f, 0.70f, 0.85f, 0.85f};
+    private float[] distance = {0, 200, 210, 230, 260, 280};
+    private float[] flywheelPower = {0.0f, 0.53f, 0.50f, 0.56f, 0.62f, 0.75f};
     private Table2D flywheel_speed_table = new Table2D(distance, flywheelPower);
 
 
@@ -158,13 +158,17 @@ public class teleop_26 extends OpMode
         Pose2D pose = llModule.limelightResult();
         float limelight_distance = 0;
 
+        if (pose != null) {
+            limelight_distance = (float) pose.getX(DistanceUnit.INCH);
+        }
+
         if (autoTargeting && pose != null) {
-            limelight_distance = (float) -pose.getX(DistanceUnit.INCH);
             currentFlywheelPower = Range.clip(flywheel_speed_table.Lookup(limelight_distance), 0.0, 1.0);
         } else if (!autoTargeting) {
             currentFlywheelPower = flywheelPresetPower;
         }
 
+        telemetry.addData("Tag Detected", pose != null);
         telemetry.addData("Auto Targeting", autoTargeting);
         telemetry.addData("Limelight Distance", limelight_distance);
         telemetry.addData("Flywheel Power", currentFlywheelPower);
@@ -257,6 +261,7 @@ public class teleop_26 extends OpMode
 
             // field centric
             yaw = -orientation.getYaw(AngleUnit.RADIANS);
+            telemetry.addData("Auto targeting", autoTargeting);
 
             // IMU Telemetry
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
