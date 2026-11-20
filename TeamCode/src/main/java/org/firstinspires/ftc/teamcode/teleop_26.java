@@ -151,9 +151,9 @@ public class teleop_26 extends OpMode
 
         //Translate inputs to outputs for motors
         motorBL.setPower (drive_Mod + driveTurn - strafe_Mod);
-        motorBR.setPower (drive_Mod - driveTurn + strafe_Mod);
+        motorBR.setPower (drive_Mod - driveTurn - strafe_Mod);
         motorFL.setPower (drive_Mod + driveTurn + strafe_Mod);
-        motorFR.setPower (drive_Mod - driveTurn - strafe_Mod);
+        motorFR.setPower (drive_Mod - driveTurn + strafe_Mod);
 
     }
 
