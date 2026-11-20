@@ -93,7 +93,7 @@ public class teleop_26 extends OpMode
         telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));
         telemetry.addData("Heading angle (DEGREES)", pose2D.getHeading(AngleUnit.RADIANS));
 
-        yaw = pose2D.getHeading(AngleUnit.RADIANS);
+        yaw = -pose2D.getHeading(AngleUnit.RADIANS);
         
         // call upon robot components
         flywheel();
