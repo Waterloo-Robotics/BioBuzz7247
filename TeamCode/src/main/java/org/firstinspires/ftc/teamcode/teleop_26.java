@@ -48,6 +48,11 @@ public class teleop_26 extends OpMode
     private float[] distance = {0, 200, 210, 230, 260, 280};
     private float[] flywheelPower = {0.0f, 0.53f, 0.50f, 0.56f, 0.62f, 0.75f};
     private Table2D flywheel_speed_table = new Table2D(distance, flywheelPower);
+    // score stuff
+    private boolean redAud;
+    private boolean redSco;
+    private boolean blueAud;
+    private boolean blueSco;
 
 
     // IMU Stuff
@@ -109,12 +114,27 @@ public class teleop_26 extends OpMode
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit START
     @Override
     public void init_loop() {
-
+        if (gamepad1.aWasPressed() || gamepad2.aWasPressed()) {
+            redAud = true;
+            blueSco = false;
+            blueAud = false;
+            redSco = false;
+        }
+        if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
+            redAud = false;
+            blueSco = true;
+            blueAud = false;
+            redSco = false;
+        }
     }
 
     // * Code to run ONCE when the driver hits START
     @Override
     public void start() {
+        blueSco = false;
+        redSco = false;
+        blueAud = false;
+        redAud = false;
         runtime.reset();
     }
 
