@@ -55,8 +55,8 @@ public class teleop_26 extends OpMode
 
         // Robot Components Hardware Map
         flywheel = hardwareMap.get(DcMotor.class, "flywheel");
-        transfer = hardwareMap.get(DcMotor.class, "transferMotor");
-        intake = hardwareMap.get(DcMotor.class, "intakeMotor");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         // Pinpoint IMU!
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -201,7 +201,7 @@ public class teleop_26 extends OpMode
         // X and Y positions
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
                 //X Top, Y Bottom
-                GoBildaPinpointDriver.EncoderDirection.REVERSED);
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         pinpoint.resetPosAndIMU();
     }
