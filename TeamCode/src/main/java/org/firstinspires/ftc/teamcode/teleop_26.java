@@ -53,6 +53,8 @@ public class teleop_26 extends OpMode
     private boolean redSco;
     private boolean blueAud;
     private boolean blueSco;
+    private boolean redAlliance;
+    private boolean blueAlliance;
 
 
     // IMU Stuff
@@ -61,7 +63,13 @@ public class teleop_26 extends OpMode
 
     @Override
     public void init() {
-
+      // hive pos
+        redAlliance = false;
+        blueAlliance = false;
+        blueSco = false;
+        redSco = false;
+        blueAud = false;
+        redAud = false;
         flywheelPresetPower = 0.53;
         currentFlywheelPower = flywheelPresetPower;
         telemetry.addData("Status", "Initialized");
@@ -119,22 +127,20 @@ public class teleop_26 extends OpMode
             blueSco = false;
             blueAud = false;
             redSco = false;
+            redAlliance = true;
         }
         if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
             redAud = false;
             blueSco = true;
             blueAud = false;
             redSco = false;
+            blueAlliance = true;
         }
     }
 
     // * Code to run ONCE when the driver hits START
     @Override
     public void start() {
-        blueSco = false;
-        redSco = false;
-        blueAud = false;
-        redAud = false;
         runtime.reset();
     }
 
@@ -143,6 +149,15 @@ public class teleop_26 extends OpMode
     // Stuff below is how you call on stuff!!
     @Override
     public void loop() {
+        if (blueAlliance == true) {
+            limelight.pipelineSwitch(2);
+        }
+        if (redAlliance == true) {
+            limelight.pipelineSwitch(0);
+        }
+        if (gamepad2.touchpadWasPressed()) {
+
+        }
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
