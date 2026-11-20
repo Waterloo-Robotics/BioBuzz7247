@@ -21,10 +21,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class Auto_2026_2027 extends OpMode {
 
     //---Declare OpMode members.---//
-    private DcMotor frontLeftDrive;
-    private DcMotor frontRightDrive;
-    private DcMotor backLeftDrive;
-    private DcMotor backRightDrive;
+    private DcMotor motorFR = null;
+    private DcMotor motorFL = null;
+    private DcMotor motorBR = null;
+    private DcMotor motorBL = null;
     private DcMotor flywheel;
     private DcMotor transfer;
     private DcMotor intake;
@@ -41,10 +41,10 @@ public class Auto_2026_2027 extends OpMode {
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "motorFL");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "motorFR");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "motorBL");
-        backRightDrive = hardwareMap.get(DcMotor.class, "motorBR");
+        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
+        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         // IMU - FIELD CENTRIC STUFF!! //
@@ -63,10 +63,10 @@ public class Auto_2026_2027 extends OpMode {
         // Defining stuff frfr.. I think? - Brayyten
 //        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         // flywheel.setDirection(DcMotor.Direction.FORWARD);
         // transfer.setDirection(DcMotor.Direction.FORWARD);
@@ -159,24 +159,31 @@ public class Auto_2026_2027 extends OpMode {
         double robotPinpointXError = robotXDestination - robotXPosition;
         double robotPinpointYError = robotYDestination - robotYPosition;
 
-        // Field Centric stuff
-        double x_Mod = -(robotPinpointYError * Math.cos(yaw) + robotPinpointYError * Math.sin(yaw));
-        double y_Mod = -robotPinpointXError * Math.sin(yaw) + robotPinpointYError * Math.cos(yaw);
-//        double x_Mod = robotPinpointYError * Math.cos(yaw) + robotPinpointXError * Math.sin(yaw);
-//        double y_Mod = robotPinpointXError * Math.cos(yaw) - robotPinpointYError * Math.sin(yaw);
+        double drive_Input = gamepad1.left_stick_y;
+        double strafe_Input = -gamepad1.left_stick_x;
+        double driveTurn = gamepad1.right_stick_x;
 
-//        if (robotPinpointXError > 0.5 && robotPinpointYError > 0.5);
-//        {
-//            stop();
-//        }
-        frontRightDrive.setPower(y_Mod);
-        backRightDrive.setPower(y_Mod);
-        frontLeftDrive.setPower(x_Mod);
-        backLeftDrive.setPower(x_Mod);
+        double theta = Math.atan2(drive_Input, strafe_Input);
+        double r = Math.hypot(strafe_Input, drive_Input);
 
+        theta = AngleUnit.normalizeRadians(theta - yaw);
+
+        double drive_Mod = r * Math.sin(theta);
+        double strafe_Mod = r * Math.cos(theta);
+
+        //Translate inputs to outputs for motors
+        motorBL.setPower (drive_Mod + driveTurn - strafe_Mod);
+        motorBR.setPower (drive_Mod - driveTurn + strafe_Mod);
+        motorFL.setPower (drive_Mod + driveTurn + strafe_Mod);
+        motorFR.setPower (drive_Mod - driveTurn - strafe_Mod);
 
         // Telemetry
         telemetry.addData("X Error", robotPinpointXError);
         telemetry.addData("Y Error", robotPinpointYError);
+
+        if (robotPinpointXError > 0.5 && robotPinpointYError > 0.5);
+        {
+            stop();
+        }
     }
 }
