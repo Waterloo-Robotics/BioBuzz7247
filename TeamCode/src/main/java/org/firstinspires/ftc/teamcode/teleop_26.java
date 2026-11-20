@@ -138,7 +138,7 @@ public class teleop_26 extends OpMode
     {
         //Get variables from the gamepad
         double drive_Input = gamepad1.left_stick_y;
-        double strafe_Input = -gamepad1.left_stick_x;
+        double strafe_Input = gamepad1.left_stick_x;
         double driveTurn = gamepad1.right_stick_x;
 
         double theta = Math.atan2(drive_Input, strafe_Input);
