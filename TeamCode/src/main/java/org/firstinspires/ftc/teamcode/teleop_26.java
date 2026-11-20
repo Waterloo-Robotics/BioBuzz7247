@@ -142,6 +142,13 @@ public class teleop_26 extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        if (blueAlliance == true) {
+            limelight.pipelineSwitch(2);
+        }
+        if (redAlliance == true) {
+            limelight.pipelineSwitch(0);
+        }
+
     }
 
 
@@ -149,14 +156,35 @@ public class teleop_26 extends OpMode
     // Stuff below is how you call on stuff!!
     @Override
     public void loop() {
-        if (blueAlliance == true) {
-            limelight.pipelineSwitch(2);
-        }
-        if (redAlliance == true) {
-            limelight.pipelineSwitch(0);
-        }
-        if (gamepad2.touchpadWasPressed()) {
 
+        if (gamepad2.touchpadWasPressed()) {
+            if (blueSco == true) {
+                blueSco = false;
+                blueAud = true;
+            }
+            if (blueAud == true) {
+                blueAud = false;
+                blueSco = true;
+            }
+            if (redAud == true) {
+                redAud = false;
+                redSco = false;
+            }
+            if (redSco == true) {
+                redAud = true;
+                redSco = false;
+            }
+        }
+
+        if (redSco == true) {
+            limelight.pipelineSwitch(0);
+        } else if (redAud == true) {
+            limelight.pipelineSwitch(1);
+        }
+        if (blueSco == true) {
+            limelight.pipelineSwitch(2);
+        } else if (blueAud == false) {
+            limelight.pipelineSwitch(3);
         }
 
         // POV Mode uses left stick to go forward, and right stick to turn.
