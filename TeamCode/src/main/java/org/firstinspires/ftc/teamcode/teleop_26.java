@@ -116,6 +116,7 @@ public class teleop_26 extends OpMode
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Alliance Controls", "Press A = Red Alliance | Press B = Blue Alliance");
     }
 
 
@@ -138,6 +139,9 @@ public class teleop_26 extends OpMode
             blueAlliance = true;
             redAlliance = false;
         }
+
+        telemetry.addData("Alliance Controls", "Press A = Red Alliance | Press B = Blue Alliance");
+        telemetry.addData("Selected Alliance", redAlliance ? "Red Alliance (Audience Start)" : (blueAlliance ? "Blue Alliance (Score Start)" : "None Selected"));
     }
 
     // * Code to run ONCE when the driver hits START
@@ -229,6 +233,9 @@ public class teleop_26 extends OpMode
             currentFlywheelPower = flywheelPresetPower;
         }
 
+        String tipSide = (redAud || blueAud) ? "Audience" : ((redSco || blueSco) ? "Score" : "None");
+        telemetry.addData("Tip Side", tipSide);
+        telemetry.addData("Next Tip Button", "Gamepad 2 Touchpad");
         telemetry.addData("Tag Detected", pose != null);
         telemetry.addData("Auto Targeting", autoTargeting);
         telemetry.addData("Limelight Distance", limelight_distance);
