@@ -63,7 +63,7 @@ public class teleop_26 extends OpMode
 
     @Override
     public void init() {
-      // hive pos
+        // hive pos
         redAlliance = false;
         blueAlliance = false;
         blueSco = false;
@@ -128,6 +128,7 @@ public class teleop_26 extends OpMode
             blueAud = false;
             redSco = false;
             redAlliance = true;
+            blueAlliance = false;
         }
         if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
             redAud = false;
@@ -135,6 +136,7 @@ public class teleop_26 extends OpMode
             blueAud = false;
             redSco = false;
             blueAlliance = true;
+            redAlliance = false;
         }
     }
 
@@ -146,7 +148,7 @@ public class teleop_26 extends OpMode
             limelight.pipelineSwitch(2);
         }
         if (redAlliance == true) {
-            limelight.pipelineSwitch(0);
+            limelight.pipelineSwitch(1);
         }
 
     }
@@ -161,16 +163,13 @@ public class teleop_26 extends OpMode
             if (blueSco == true) {
                 blueSco = false;
                 blueAud = true;
-            }
-            if (blueAud == true) {
+            } else if (blueAud == true) {
                 blueAud = false;
                 blueSco = true;
-            }
-            if (redAud == true) {
+            } else if (redAud == true) {
                 redAud = false;
-                redSco = false;
-            }
-            if (redSco == true) {
+                redSco = true;
+            } else if (redSco == true) {
                 redAud = true;
                 redSco = false;
             }
@@ -180,10 +179,9 @@ public class teleop_26 extends OpMode
             limelight.pipelineSwitch(0);
         } else if (redAud == true) {
             limelight.pipelineSwitch(1);
-        }
-        if (blueSco == true) {
+        } else if (blueSco == true) {
             limelight.pipelineSwitch(2);
-        } else if (blueAud == false) {
+        } else if (blueAud == true) {
             limelight.pipelineSwitch(3);
         }
 
